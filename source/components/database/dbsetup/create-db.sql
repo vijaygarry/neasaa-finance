@@ -9,4 +9,7 @@ CREATE DATABASE finance
 COMMENT ON DATABASE finance
     IS 'Finance database';
 
-ALTER DATABASE finance SET search_path TO finance_app;
+ALTER DATABASE finance SET search_path TO finance_schema;
+
+-- Drop the default public schema
+DROP schema public;

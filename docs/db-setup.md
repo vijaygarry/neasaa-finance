@@ -30,23 +30,15 @@ Choose one of the following options depending on your setup scenario.
 
 Use this when setting up the schema for the first time.
 
-#### 3a. Initialize the schema
+#### 3a. Create the schema structure
 
-Run the schema creation script to set up the schema namespace:
-
-```
-source/components/database/dbsetup/create-db-schema.sql
-```
-
-#### 3b. Create the schema structure
-
-Apply the full table and object structure:
+Apply the schema, table and object structure:
 
 ```
 source/components/database/schema/schema.sql
 ```
 
-#### 3c. Insert application metadata
+#### 3b. Insert application metadata
 
 Load the initial application data:
 
@@ -81,6 +73,5 @@ psql -U <db_user> -d <db_name> < /path/to/prod_dump.sql
 | `create-db.sql` | `dbsetup/` | Creates the database |
 | `create-db-user.sql` | `dbsetup/` | Creates DB users and roles |
 | `grants.sql` | `dbsetup/` | Applies permission grants |
-| `create-db-schema.sql` | `dbsetup/` | Creates the schema namespace |
 | `schema.sql` | `schema/` | Creates tables and schema objects |
 | `data.sql` | `data/` | Inserts application metadata |
