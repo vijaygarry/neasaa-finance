@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+    }
+}
+
+def localProps = new Properties()
+file('local.properties').withInputStream { localProps.load(it) }
+
+rootProject.name = 'family-tree'
+include ':components:finance-app', ':components:finance-ux', ':components:neasaa-base-app'
+project(':components:neasaa-base-app').projectDir = file(localProps['neasaaBaseAppPath'])
