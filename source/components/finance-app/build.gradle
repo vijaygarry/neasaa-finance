@@ -1,0 +1,35 @@
+plugins {
+    // Apply the spotless plugin before common.gradle.
+    id 'com.diffplug.spotless' version '8.5.1' apply false
+}
+
+apply from: "${rootDir}/gradle/common.gradle"
+
+jar {
+    archiveBaseName.set('finance-app')
+}
+
+dependencies {
+    api project(':components:neasaa-base-app')
+    implementation (libraries.springBoot)
+    implementation libraries.springFrameworkWeb
+    implementation libraries.springFramework
+    implementation libraries.jackson
+    implementation libraries.userAgentParser
+}
+
+tasks.register('runFinanceApp', JavaExec) {
+    group = 'application'
+    description = 'Start Springboot Application'
+    environment 'app.properties.file.name', 'finance.properties'
+    classpath = sourceSets.main.runtimeClasspath +
+            files('src/main/config/')
+    mainClass = 'com.neasaa.finance.FinanceApplication'
+    //args = ['--spring.profiles.active=dev']             // optional args
+    jvmArgs = ['-Xmx512m']                               // optional JVM args
+
+    doFirst {
+        println "Classpath:"
+        classpath.each { println it }
+    }
+}

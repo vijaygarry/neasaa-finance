@@ -1,0 +1,4 @@
+.idea/
+logs/app.log
+source/build/
+source/components/finance-app/build/
