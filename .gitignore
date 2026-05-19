@@ -2,3 +2,5 @@
 logs/app.log
 source/build/
 source/components/finance-app/build/
+logs/
+source/components/finance-app/bin/

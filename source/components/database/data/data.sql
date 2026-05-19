@@ -28,6 +28,8 @@ VALUES ('SIGN_UP_REQUEST_OTP', 'Request OTP for Sign Up', false, true, 'NO_AUTHO
 INSERT INTO finance_schema.lkpoperation (operationid, description, isauthorizationrequired, isauditrequired, authorizationtype, active, createdby, createddate, lastupdatedby, lastupdateddate) 
 VALUES ('SIGN_UP', 'Sign Up User', false, true, 'NO_AUTHORIZATION', true, 1, '2026-05-18 00:00:00-04', 1, '2026-05-18 00:00:00-04');
 
+INSERT INTO finance_schema.lkpoperation (operationid, description, isauthorizationrequired, isauditrequired, authorizationtype, active, createdby, createddate, lastupdatedby, lastupdateddate)
+VALUES ('STOCK_SUGGESTION', 'Get stock suggestions', false, true, 'NO_AUTHORIZATION', true, 1, '2026-05-19 00:00:00-04', 1, '2026-05-19 00:00:00-04');
 
 
 INSERT INTO finance_schema.lkprole (roleid, roledesc, enable, createdby, createddate, lastupdatedby, lastupdateddate) 
