@@ -18,6 +18,73 @@ dependencies {
     implementation libraries.userAgentParser
 }
 
+// Override uxDir path as:
+// ./gradlew build -PfrontendPath=/path/to/finance-ux
+def localProps = new Properties()
+file("${rootDir}/local.properties").withInputStream { localProps.load(it) }
+def uxDir = project.findProperty("frontendPath") ?: localProps['uxComponentRootPath']
+def uxBuildDir = "${uxDir}/build"
+
+// Explicitly build UX component with:
+// ./gradlew build -PbuildReactApp
+def buildUxComponent = project.hasProperty("buildReactApp")
+
+def resourcesDir = "$projectDir/src/main/resources"
+def distributionDir = "${rootDir}/distribution"
+
+task buildUx(type: Exec) {
+    onlyIf { buildUxComponent }
+    workingDir uxDir
+    commandLine 'npm', 'run', 'rebuild'
+    doFirst {
+        println "Building UX files from $uxDir"
+    }
+}
+
+task copyUxFilesToBoot(type: Copy) {
+    onlyIf { buildUxComponent }
+    dependsOn buildUx
+    from("$uxBuildDir")
+    into("$resourcesDir/static")
+
+    doFirst {
+        println "Copying UX files from: $uxBuildDir"
+        println "Destination: $resourcesDir/static"
+        def destDir = file("$resourcesDir/static")
+        if (destDir.exists()) {
+            println "Deleting existing static directory before copy"
+            destDir.deleteDir()
+        }
+    }
+
+    doLast {
+        println "Copy complete. Files in static folder:"
+        println fileTree("$resourcesDir/static").files
+    }
+}
+
+processResources.dependsOn copyUxFilesToBoot
+
+tasks.register('buildDist', Copy) {
+    dependsOn jar
+    from(jar) {
+        into 'lib'
+    }
+    from(configurations.runtimeClasspath) {
+        into 'lib'
+    }
+    into "${distributionDir}"
+}
+
+task extraCleanup(type: Delete) {
+    doFirst {
+        println "Deleting: $distributionDir"
+    }
+    delete distributionDir
+}
+
+clean.dependsOn(extraCleanup)
+
 tasks.register('runFinanceApp', JavaExec) {
     group = 'application'
     description = 'Start Springboot Application'
