@@ -67,7 +67,11 @@ Replace the placeholder passwords for the database users (`finance_master`, `fin
 
 Complete the database setup by following the instructions in [docs/db-setup.md](docs/db-setup.md).
 
-### Step 3: Build
+### Step 4: UX Setup
+
+Complete the UX setup by following the instructions in [components/finance-ux/setup-ux.md](components/finance-ux/setup-ux.md).
+
+### Step 5: Build
 
 # Normal build (skips React build — fast)
 ./gradlew build
