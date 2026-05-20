@@ -7,7 +7,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 
-INSERT INTO finance_schema.appuser (userid, logonname, hashpassword, firstname, lastname, emailid, phone, authenticationtype, singlesignonid, invalidloginattempts, lastlogintime, lastpasswordchangetime, status, createdby, createddate, lastupdatedby, lastupdateddate) 
+INSERT INTO finance_schema.appuser (userid, logonname, hashpassword, firstname, lastname, emailid, phone, authenticationtype, singlesignonid, invalidloginattempts, lastlogintime, lastpasswordchangetime, status, createdby, createddate, lastupdatedby, lastupdateddate)
 VALUES (1, 'system', 'unknown pwd', 'System', 'User', 'system@finance.neasaa.com', NULL, 'DB_PWD', NULL, NULL, NULL, NULL, 'I', 1, '2026-05-18 00:00:00-04', 1, '2026-05-18 00:00:00-04');
 
 
