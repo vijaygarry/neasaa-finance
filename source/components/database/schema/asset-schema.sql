@@ -170,6 +170,9 @@ CREATE TABLE finance_schema.mstassetprice (
     avgdailyvolume10day         bigint,
     marketcap                   numeric(20,4),
     dividendyield               numeric(10,4),
+    createdby                   integer                     NOT NULL,
+    createddate                 timestamp with time zone    NOT NULL,
+    lastupdatedby               integer                     NOT NULL,
     lastupdateddate             timestamp with time zone    NOT NULL
 );
 
@@ -209,6 +212,10 @@ ALTER TABLE ONLY finance_schema.mstassetprice
     ADD CONSTRAINT mstassetprice_pkey PRIMARY KEY (assetid);
 ALTER TABLE ONLY finance_schema.mstassetprice
     ADD CONSTRAINT mstassetprice_assetid_fkey FOREIGN KEY (assetid) REFERENCES finance_schema.mstasset(assetid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE ONLY finance_schema.mstassetprice
+    ADD CONSTRAINT mstassetprice_createdby_fkey FOREIGN KEY (createdby) REFERENCES finance_schema.appuser(userid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE ONLY finance_schema.mstassetprice
+    ADD CONSTRAINT mstassetprice_lastupdatedby_fkey FOREIGN KEY (lastupdatedby) REFERENCES finance_schema.appuser(userid) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 -- ------------------------------------------------------------
@@ -234,6 +241,9 @@ CREATE TABLE finance_schema.mstassetfundamentals (
     analystratinglevel      character varying(20),
     oneyearpricetarget      numeric(15,4),
     pricetargetupdateddate  date,
+    createdby               integer                     NOT NULL,
+    createddate             timestamp with time zone    NOT NULL,
+    lastupdatedby           integer                     NOT NULL,
     lastupdateddate         timestamp with time zone    NOT NULL
 );
 
@@ -263,6 +273,10 @@ ALTER TABLE ONLY finance_schema.mstassetfundamentals
     ADD CONSTRAINT mstassetfundamentals_pkey PRIMARY KEY (assetid);
 ALTER TABLE ONLY finance_schema.mstassetfundamentals
     ADD CONSTRAINT mstassetfundamentals_assetid_fkey FOREIGN KEY (assetid) REFERENCES finance_schema.mstasset(assetid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE ONLY finance_schema.mstassetfundamentals
+    ADD CONSTRAINT mstassetfundamentals_createdby_fkey FOREIGN KEY (createdby) REFERENCES finance_schema.appuser(userid) ON UPDATE RESTRICT ON DELETE RESTRICT;
+ALTER TABLE ONLY finance_schema.mstassetfundamentals
+    ADD CONSTRAINT mstassetfundamentals_lastupdatedby_fkey FOREIGN KEY (lastupdatedby) REFERENCES finance_schema.appuser(userid) ON UPDATE RESTRICT ON DELETE RESTRICT;
 
 
 -- ------------------------------------------------------------
