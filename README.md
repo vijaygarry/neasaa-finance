@@ -14,7 +14,11 @@ git clone https://github.com/vijaygarry/neasaa-finance.git neasaa-finance
 cd neasaa-finance
 ```
 
-### Step 2: Build
+### Step 2: Database Setup
+
+Complete the database setup by following the instructions in [docs/db-setup.md](docs/db-setup.md).
+
+### Step 3: Build
 
 # Normal build (skips React build — fast)
 ./gradlew build
