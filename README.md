@@ -69,7 +69,7 @@ Complete the database setup by following the instructions in [docs/db-setup.md](
 
 ### Step 4: UX Setup
 
-Complete the UX setup by following the instructions in [components/finance-ux/setup-ux.md](components/finance-ux/setup-ux.md).
+Complete the UX setup by following the instructions in [source/components/finance-ux/setup-ux.md](source/components/finance-ux/setup-ux.md).
 
 ### Step 5: Build
 
@@ -82,7 +82,7 @@ Complete the UX setup by following the instructions in [components/finance-ux/se
 # Clean + full build + copy to distribution folder
 ./gradlew clean buildDist -PbuildReactApp
 
-### Step 5: Start the Server
+### Step 6: Start the Server
 
 ```bash
 ./gradlew runFinanceApp
