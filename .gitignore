@@ -4,3 +4,9 @@ source/build/
 source/components/finance-app/build/
 logs/
 source/components/finance-app/bin/
+source/components/finance-ux/node_modules/
+source/components/finance-ux/.pnp
+source/components/finance-ux/coverage
+source/components/finance-ux/build
+source/components/finance-app/src/main/resources/static/
+source/distribution/
