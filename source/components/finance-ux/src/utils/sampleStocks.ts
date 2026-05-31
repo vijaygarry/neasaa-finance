@@ -1,0 +1,255 @@
+export interface StockDetail {
+  symbol: string;
+  name: string;
+  lastUpdated: string;
+  currentPrice: number;
+  changeValue: number;
+  changePercent: number;
+  dayLow: number;
+  dayHigh: number;
+  fiftyTwoWeekLow: number;
+  fiftyTwoWeekHigh: number;
+  previousClose: number;
+  open: number;
+  bid: number;
+  bidSize: number;
+  ask: number;
+  askSize: number;
+  fiftyDayAverage: number;
+  fiftyDayAverageChange: number;
+  twoHundredDayAverage: number;
+  twoHundredDayAverageChange: number;
+  volume: number;
+  avgVolume10Days: number;
+  avgVolume3Months: number;
+  marketCap: number;
+  assetType: string;
+  sector: string;
+  industry: string;
+  market: string;
+  peTrailing: number;
+  peForward: number;
+  dividendRate: number;
+  dividendYield: number;
+  dividendExDate: string;
+  dividendPayDate: string;
+  nextEarningsDate: string;
+  earningsStartDate: string;
+  earningsEndDate: string;
+  averageAnalystRating: number;
+  analystRatingLevel: string;
+  oneYearPriceTarget: number;
+}
+
+export const SAMPLE_STOCKS: StockDetail[] = [
+  {
+    symbol: 'AAPL',
+    name: 'Apple Inc.',
+    lastUpdated: '2026-05-23T14:30:00',
+    currentPrice: 189.45,
+    changeValue: 2.35,
+    changePercent: 1.26,
+    dayLow: 187.10,
+    dayHigh: 191.80,
+    fiftyTwoWeekLow: 142.50,
+    fiftyTwoWeekHigh: 199.62,
+    previousClose: 187.10,
+    open: 188.05,
+    bid: 189.44,
+    bidSize: 2000,
+    ask: 189.46,
+    askSize: 1800,
+    fiftyDayAverage: 185.30,
+    fiftyDayAverageChange: 2.19,
+    twoHundredDayAverage: 178.92,
+    twoHundredDayAverageChange: 5.85,
+    volume: 48520000,
+    avgVolume10Days: 52340000,
+    avgVolume3Months: 51240000,
+    marketCap: 2980000000000,
+    assetType: 'EQUITY',
+    sector: 'Technology',
+    industry: 'Consumer Electronics',
+    market: 'NASDAQ',
+    peTrailing: 29.44,
+    peForward: 27.32,
+    dividendRate: 0.96,
+    dividendYield: 0.51,
+    dividendExDate: '2026-05-17',
+    dividendPayDate: '2026-05-30',
+    nextEarningsDate: '2026-07-30',
+    earningsStartDate: '2026-07-01',
+    earningsEndDate: '2026-06-30',
+    averageAnalystRating: 4.2,
+    analystRatingLevel: 'Buy',
+    oneYearPriceTarget: 210.50,
+  },
+  {
+    symbol: 'TSLA',
+    name: 'Tesla, Inc.',
+    lastUpdated: '2026-05-23T14:30:00',
+    currentPrice: 178.20,
+    changeValue: -4.80,
+    changePercent: -2.62,
+    dayLow: 176.15,
+    dayHigh: 183.90,
+    fiftyTwoWeekLow: 95.80,
+    fiftyTwoWeekHigh: 265.40,
+    previousClose: 183.00,
+    open: 182.50,
+    bid: 178.19,
+    bidSize: 1500,
+    ask: 178.21,
+    askSize: 1600,
+    fiftyDayAverage: 195.45,
+    fiftyDayAverageChange: -8.83,
+    twoHundredDayAverage: 202.35,
+    twoHundredDayAverageChange: -12.06,
+    volume: 142500000,
+    avgVolume10Days: 135000000,
+    avgVolume3Months: 128000000,
+    marketCap: 580000000000,
+    assetType: 'EQUITY',
+    sector: 'Consumer Cyclical',
+    industry: 'Automotive',
+    market: 'NASDAQ',
+    peTrailing: 0,
+    peForward: 0,
+    dividendRate: 0,
+    dividendYield: 0,
+    dividendExDate: '',
+    dividendPayDate: '',
+    nextEarningsDate: '2026-07-20',
+    earningsStartDate: '2026-07-01',
+    earningsEndDate: '2026-06-30',
+    averageAnalystRating: 3.1,
+    analystRatingLevel: 'Hold',
+    oneYearPriceTarget: 195.00,
+  },
+  {
+    symbol: 'MSFT',
+    name: 'Microsoft Corporation',
+    lastUpdated: '2026-05-23T14:28:00',
+    currentPrice: 415.30,
+    changeValue: 5.10,
+    changePercent: 1.24,
+    dayLow: 410.25,
+    dayHigh: 418.50,
+    fiftyTwoWeekLow: 345.20,
+    fiftyTwoWeekHigh: 445.88,
+    previousClose: 410.20,
+    open: 411.50,
+    bid: 415.29,
+    bidSize: 2500,
+    ask: 415.31,
+    askSize: 2300,
+    fiftyDayAverage: 408.75,
+    fiftyDayAverageChange: 1.66,
+    twoHundredDayAverage: 395.45,
+    twoHundredDayAverageChange: 5.06,
+    volume: 21200000,
+    avgVolume10Days: 22500000,
+    avgVolume3Months: 23100000,
+    marketCap: 3100000000000,
+    assetType: 'EQUITY',
+    sector: 'Technology',
+    industry: 'Software—Infrastructure',
+    market: 'NASDAQ',
+    peTrailing: 37.85,
+    peForward: 32.15,
+    dividendRate: 2.72,
+    dividendYield: 0.65,
+    dividendExDate: '2026-05-21',
+    dividendPayDate: '2026-06-11',
+    nextEarningsDate: '2026-07-28',
+    earningsStartDate: '2026-07-01',
+    earningsEndDate: '2026-06-30',
+    averageAnalystRating: 4.5,
+    analystRatingLevel: 'Buy',
+    oneYearPriceTarget: 440.00,
+  },
+  {
+    symbol: 'GOOGL',
+    name: 'Alphabet Inc.',
+    lastUpdated: '2026-05-23T14:29:00',
+    currentPrice: 175.80,
+    changeValue: -1.20,
+    changePercent: -0.68,
+    dayLow: 174.50,
+    dayHigh: 177.80,
+    fiftyTwoWeekLow: 128.60,
+    fiftyTwoWeekHigh: 192.35,
+    previousClose: 177.00,
+    open: 176.80,
+    bid: 175.79,
+    bidSize: 1800,
+    ask: 175.81,
+    askSize: 2000,
+    fiftyDayAverage: 173.25,
+    fiftyDayAverageChange: 1.47,
+    twoHundredDayAverage: 165.90,
+    twoHundredDayAverageChange: 5.98,
+    volume: 28500000,
+    avgVolume10Days: 30200000,
+    avgVolume3Months: 29800000,
+    marketCap: 1150000000000,
+    assetType: 'EQUITY',
+    sector: 'Technology',
+    industry: 'Internet Services',
+    market: 'NASDAQ',
+    peTrailing: 21.55,
+    peForward: 18.92,
+    dividendRate: 0,
+    dividendYield: 0,
+    dividendExDate: '',
+    dividendPayDate: '',
+    nextEarningsDate: '2026-07-28',
+    earningsStartDate: '2026-07-01',
+    earningsEndDate: '2026-06-30',
+    averageAnalystRating: 4.3,
+    analystRatingLevel: 'Buy',
+    oneYearPriceTarget: 195.00,
+  },
+  {
+    symbol: 'AMZN',
+    name: 'Amazon.com, Inc.',
+    lastUpdated: '2026-05-23T14:30:00',
+    currentPrice: 186.50,
+    changeValue: 3.20,
+    changePercent: 1.74,
+    dayLow: 184.20,
+    dayHigh: 188.70,
+    fiftyTwoWeekLow: 138.80,
+    fiftyTwoWeekHigh: 198.50,
+    previousClose: 183.30,
+    open: 183.80,
+    bid: 186.49,
+    bidSize: 2100,
+    ask: 186.51,
+    askSize: 1900,
+    fiftyDayAverage: 180.55,
+    fiftyDayAverageChange: 3.32,
+    twoHundredDayAverage: 174.20,
+    twoHundredDayAverageChange: 7.03,
+    volume: 58200000,
+    avgVolume10Days: 62500000,
+    avgVolume3Months: 59800000,
+    marketCap: 1950000000000,
+    assetType: 'EQUITY',
+    sector: 'Consumer Cyclical',
+    industry: 'Internet Retail',
+    market: 'NASDAQ',
+    peTrailing: 62.48,
+    peForward: 44.35,
+    dividendRate: 0,
+    dividendYield: 0,
+    dividendExDate: '',
+    dividendPayDate: '',
+    nextEarningsDate: '2026-07-30',
+    earningsStartDate: '2026-07-01',
+    earningsEndDate: '2026-06-30',
+    averageAnalystRating: 4.6,
+    analystRatingLevel: 'Buy',
+    oneYearPriceTarget: 210.00,
+  },
+];

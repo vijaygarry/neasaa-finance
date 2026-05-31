@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { label: 'Stocks', path: '/stocks' },
+  { label: 'Stocks', path: '/stock-details' },
   { label: 'Options', path: '/options' },
   { label: 'Accounts', path: '/accounts' },
 ];
