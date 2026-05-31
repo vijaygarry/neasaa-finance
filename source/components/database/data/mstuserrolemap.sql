@@ -1,0 +1,1 @@
+INSERT INTO finance_schema.mstuserrolemap (userid, roleid, createdby, createddate, lastupdatedby, lastupdateddate) VALUES (1, 'SUPER_ADMIN_ROLE', 1, '2026-05-18 00:00:00-04', 1, '2026-05-18 00:00:00-04');

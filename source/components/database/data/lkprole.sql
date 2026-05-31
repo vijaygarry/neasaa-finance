@@ -1,0 +1,3 @@
+INSERT INTO finance_schema.lkprole (roleid, roledesc, enable, createdby, createddate, lastupdatedby, lastupdateddate) VALUES ('CUSTOMER_ROLE', 'Generic role for customers', true, 1, '2026-05-18 00:00:00-04', 1, '2026-05-18 00:00:00-04');
+INSERT INTO finance_schema.lkprole (roleid, roledesc, enable, createdby, createddate, lastupdatedby, lastupdateddate) VALUES ('APPLICATION_ADMIN_ROLE', 'Application Admin Role', true, 1, '2026-05-18 00:00:00-04', 1, '2026-05-18 00:00:00-04');
+INSERT INTO finance_schema.lkprole (roleid, roledesc, enable, createdby, createddate, lastupdatedby, lastupdateddate) VALUES ('SUPER_ADMIN_ROLE', 'Super Admin', true, 1, '2026-05-18 00:00:00-04', 1, '2026-05-18 00:00:00-04');
