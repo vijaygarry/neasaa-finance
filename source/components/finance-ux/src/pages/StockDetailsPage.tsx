@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
 import {
-  Box, Typography, Autocomplete, TextField, Paper,
+  Box, Typography, Autocomplete, TextField, Paper, Button, Alert,
 } from '@mui/material';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import InfoTooltip from '../components/InfoTooltip';
 import { searchStocks, Stock } from '../services/financeApi';
 import { StockDetail, SAMPLE_STOCKS } from '../utils/sampleStocks';
@@ -64,15 +65,30 @@ function DataRow({ label, value, highlight }: DataRowProps) {
 }
 
 export default function StockDetailsPage() {
+  const [inputValue, setInputValue] = useState('');
+  const [selectedOption, setSelectedOption] = useState<Stock | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [options, setOptions] = useState<Stock[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<StockDetail | null | 'not-found'>(null);
+  const [error, setError] = useState('');
 
-  const handleInputChange = useCallback(async (_: React.SyntheticEvent, value: string) => {
-    if (value.trim().length === 0) {
-      setOptions([]);
+  const handleInputChange = useCallback(async (
+    _: React.SyntheticEvent,
+    value: string,
+    reason: string,
+  ) => {
+    // Ignore Autocomplete's internal clears: 'reset' (Enter with no highlighted option)
+    // and 'blur' (input loses focus when Go button is clicked) — both fire with an empty
+    // value and would wipe inputValue before doLookup has a chance to read it.
+    if (!value.trim() && (reason === 'reset' || reason === 'blur')) return;
+
+    setInputValue(value);
+    if (!value.trim() || value.includes(' — ')) {
+      if (!value.trim()) { setOptions([]); setSelectedOption(null); }
       return;
     }
+    setSelectedOption(null);
     setLoading(true);
     try {
       const results = await searchStocks(value);
@@ -84,57 +100,111 @@ export default function StockDetailsPage() {
     }
   }, []);
 
+  // Case 1: user picks from the suggestion dropdown — auto-submit immediately
   const handleChange = (_: React.SyntheticEvent, value: Stock | null) => {
+    setSelectedOption(value);
     if (!value) {
       setSelected(null);
+      setError('');
       return;
     }
     const detail = SAMPLE_STOCKS.find((s) => s.symbol === value.symbol);
     setSelected(detail ?? 'not-found');
+    setError('');
   };
+
+  // Cases 2 & 3: Enter key or Go button — look up from whatever is typed
+  const doLookup = useCallback(() => {
+    setError('');
+    setSelected(null); // always clear stale details before a new lookup
+    const raw = inputValue.trim();
+    if (!raw) {
+      setError('Please search for and select a stock.');
+      return;
+    }
+    // Handle both plain symbol ("AAPL") and label format ("AAPL — Apple Inc.")
+    const sym = raw.split(' — ')[0].trim().toUpperCase();
+    const detail = SAMPLE_STOCKS.find((s) => s.symbol === sym);
+    setDropdownOpen(false);
+    if (detail) {
+      const opt: Stock = { symbol: detail.symbol, name: detail.name, type: 'EQUITY' };
+      setSelectedOption(opt);
+      // Ensure the matched option is available so the controlled value renders correctly
+      setOptions(prev => (prev.some(o => o.symbol === sym) ? prev : [opt, ...prev]));
+      setInputValue(`${detail.symbol} — ${detail.name}`);
+      setSelected(detail);
+    } else {
+      setSelected('not-found');
+    }
+  }, [inputValue]);
 
   const detail = selected !== null && selected !== 'not-found' ? selected : null;
   const isPositive = detail !== null && detail.changeValue >= 0;
   const changeColor = isPositive ? 'success.main' : 'error.main';
 
   return (
-    <Box>
-      <Typography variant="h5" gutterBottom>
+    <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
+      <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
         Stock Details
       </Typography>
 
-      <Autocomplete
-        sx={{ maxWidth: 480 }}
-        options={options}
-        loading={loading}
-        getOptionLabel={(option) => `${option.symbol} — ${option.name}`}
-        filterOptions={(x) => x}
-        onChange={handleChange}
-        onInputChange={handleInputChange}
-        noOptionsText="No results — try a symbol like AAPL"
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            label="Search stock"
-            placeholder="e.g. AAPL"
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, alignItems: 'center' }}>
+          <Autocomplete
+            size="small"
+            sx={{ minWidth: 260 }}
+            value={selectedOption}
+            inputValue={inputValue}
+            open={dropdownOpen}
+            onOpen={() => setDropdownOpen(true)}
+            onClose={() => setDropdownOpen(false)}
+            options={options}
+            loading={loading}
+            getOptionLabel={(option) => `${option.symbol} — ${option.name}`}
+            filterOptions={(x) => x}
+            onChange={handleChange}
+            onInputChange={handleInputChange}
+            noOptionsText="No results — try a symbol like AAPL"
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                size="small"
+                label="Search stock"
+                placeholder="e.g. AAPL"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') doLookup();
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <li {...props} key={option.symbol}>
+                <Box sx={{ py: 0.5 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{option.symbol}</Typography>
+                  <Typography variant="body2" color="text.secondary">{option.name}</Typography>
+                </Box>
+              </li>
+            )}
           />
-        )}
-        renderOption={(props, option) => (
-          <li {...props} key={option.symbol}>
-            <Box sx={{ py: 0.5 }}>
-              <Typography variant="body1" sx={{ fontWeight: 'bold' }}>{option.symbol}</Typography>
-              <Typography variant="body2" color="text.secondary">{option.name}</Typography>
-            </Box>
-          </li>
-        )}
-      />
+          <Button
+            variant="contained"
+            startIcon={<PlayArrowIcon />}
+            onClick={doLookup}
+          >
+            Go
+          </Button>
+        </Box>
+      </Paper>
+
+      {error && (
+        <Alert severity="warning" sx={{ mb: 2 }} onClose={() => setError('')}>
+          {error}
+        </Alert>
+      )}
 
       {selected === 'not-found' && (
-        <Paper sx={{ mt: 3, p: 3, maxWidth: 480 }}>
-          <Typography variant="body1" color="text.secondary">
-            Information not found for the selected stock.
-          </Typography>
-        </Paper>
+        <Alert severity="info" sx={{ mb: 2 }}>
+          Information not found for the selected stock.
+        </Alert>
       )}
 
       {detail && (
