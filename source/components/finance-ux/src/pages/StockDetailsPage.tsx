@@ -5,7 +5,9 @@ import {
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import CallMadeIcon from '@mui/icons-material/CallMade';
 import InfoTooltip from '../components/InfoTooltip';
+import { useNavigate } from 'react-router-dom';
 import { searchStocks, Stock } from '../services/financeApi';
 import { StockDetail, SAMPLE_STOCKS } from '../utils/sampleStocks';
 
@@ -65,6 +67,7 @@ function DataRow({ label, value, highlight }: DataRowProps) {
 }
 
 export default function StockDetailsPage() {
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState<Stock | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -208,12 +211,34 @@ export default function StockDetailsPage() {
       )}
 
       {detail && (
-        <Box sx={{ mt: 3, maxWidth: 1000 }}>
+        <Box sx={{ mt: 3 }}>
           {/* Price Card */}
           <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-              {detail.symbol} - {detail.name}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                {detail.symbol} - {detail.name}
+              </Typography>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="success"
+                  endIcon={<CallMadeIcon fontSize="small" />}
+                  onClick={() => navigate(`/options?type=call&symbol=${detail.symbol}`)}
+                >
+                  Call Option Chain
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  color="error"
+                  endIcon={<CallMadeIcon fontSize="small" />}
+                  onClick={() => navigate(`/options?type=put&symbol=${detail.symbol}`)}
+                >
+                  Put Option Chain
+                </Button>
+              </Box>
+            </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
