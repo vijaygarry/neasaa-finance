@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from 'react';
+import { useState, useCallback, useEffect, Fragment } from 'react';
 import {
   Box,
   Paper,
@@ -29,6 +29,7 @@ import {
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { useSearchParams } from 'react-router-dom';
 import { searchStocks, Stock } from '../services/financeApi';
 import { SAMPLE_OPTIONS_CHAIN, ExpirationData } from '../utils/sampleOptionsChain';
 import { SAMPLE_STOCKS, StockDetail } from '../utils/sampleStocks';
@@ -114,7 +115,16 @@ function EventBanner({ event }: { event: EventMarker }) {
   );
 }
 
-export default function OptionsPage() {
+interface OptionsPageProps {
+  initialOptionType?: 'call' | 'put';
+  pageTitle?: string;
+}
+
+export default function OptionsPage({ initialOptionType, pageTitle = 'Options Chain' }: OptionsPageProps = {}) {
+  const [searchParams] = useSearchParams();
+  const paramType = searchParams.get('type') === 'put' ? 'put' : 'call';
+  const resolvedInitialType = initialOptionType ?? paramType;
+
   const [inputValue, setInputValue] = useState('');
   const [selectedOption, setSelectedOption] = useState<Stock | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -124,7 +134,16 @@ export default function OptionsPage() {
   const [weeklyOptions, setWeeklyOptions] = useState(false);
   const [priceFrom, setPriceFrom] = useState('');
   const [priceTo, setPriceTo] = useState('');
-  const [optionType, setOptionType] = useState<'call' | 'put'>('call');
+  const [optionType, setOptionType] = useState<'call' | 'put'>(resolvedInitialType);
+
+  useEffect(() => {
+    if (!initialOptionType) {
+      setOptionType(paramType);
+    }
+  }, [paramType, initialOptionType]);
+
+  const paramSymbol = (searchParams.get('symbol') ?? '').toUpperCase();
+
   const [filteredExpirations, setFilteredExpirations] = useState<ExpirationData[] | null>(null);
   const [currentSymbol, setCurrentSymbol] = useState('');
   const [collapsedDates, setCollapsedDates] = useState<Set<string>>(new Set());
@@ -216,6 +235,19 @@ export default function OptionsPage() {
     setFilteredExpirations(exps);
   }
 
+  useEffect(() => {
+    if (!paramSymbol) return;
+    const stockMatch = SAMPLE_STOCKS.find(s => s.symbol === paramSymbol);
+    if (!stockMatch) return;
+    const opt: Stock = { symbol: stockMatch.symbol, name: stockMatch.name, type: 'EQUITY' };
+    setSelectedOption(opt);
+    setOptions([opt]);
+    setInputValue(`${stockMatch.symbol} — ${stockMatch.name}`);
+    setError('');
+    applyFilters(stockMatch.symbol);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramSymbol]);
+
   // Case 1: user picks from the suggestion dropdown — auto-submit immediately
   const handleChange = (_: React.SyntheticEvent, value: Stock | null) => {
     setSelectedOption(value);
@@ -255,7 +287,7 @@ export default function OptionsPage() {
   return (
     <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
       <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-        Options Chain
+        {pageTitle}
       </Typography>
 
       {/* Configuration Panel */}
