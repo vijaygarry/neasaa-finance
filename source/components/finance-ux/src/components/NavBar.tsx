@@ -2,37 +2,27 @@ import { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, Box, Menu, MenuItem } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useNavigate, useLocation } from 'react-router-dom';
-
-const navItems = [
-  { label: 'Stocks', path: '/stock-details' },
-  { label: 'Accounts', path: '/accounts' },
-];
-
-const optionsSubMenu = [
-  { label: 'Call Option Chain', to: '/options?type=call' },
-  { label: 'Put Option Chain', to: '/options?type=put' },
-  { label: 'Covered Call Strategy', to: '/covered-call-strategy' },
-  { label: 'Cash Secured Put Strategy', to: '/cash-secured-put-strategy' },
-];
-
-const OPTIONS_PATHS = ['/options', '/covered-call-strategy', '/cash-secured-put-strategy'];
+import { navItems, NavItem } from './navMenuConfig';
 
 export default function NavBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openMenu, setOpenMenu] = useState<{ label: string; anchor: HTMLElement } | null>(null);
 
-  const isOptionsActive = OPTIONS_PATHS.some(p => location.pathname === p);
-
-  const handleOptionsClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleOpen = (label: string, event: React.MouseEvent<HTMLButtonElement>) => {
+    setOpenMenu({ label, anchor: event.currentTarget });
   };
 
-  const handleMenuClose = () => setAnchorEl(null);
+  const handleClose = () => setOpenMenu(null);
 
-  const handleSubMenuClick = (to: string) => {
-    navigate(to);
-    handleMenuClose();
+  const handleSubNav = (path: string) => {
+    navigate(path);
+    handleClose();
+  };
+
+  const isActive = (item: NavItem) => {
+    if ('paths' in item) return item.paths.some(p => location.pathname === p.path.split('?')[0]);
+    return location.pathname === item.path;
   };
 
   return (
@@ -53,58 +43,74 @@ export default function NavBar() {
           Neasaa Finance
         </Typography>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button
-            color="inherit"
-            onClick={() => navigate('/stock-details')}
-            sx={{
-              fontWeight: location.pathname === '/stock-details' ? 'bold' : 'normal',
-              borderBottom: location.pathname === '/stock-details' ? '2px solid white' : '2px solid transparent',
+          {navItems.map((item) => {
+            const active = isActive(item);
+            const buttonSx = {
+              fontWeight: active ? 'bold' : 'normal',
+              borderBottom: active ? '2px solid white' : '2px solid transparent',
               borderRadius: 0,
-            }}
-          >
-            Stocks
-          </Button>
+            };
 
-          <Button
-            color="inherit"
-            onClick={handleOptionsClick}
-            endIcon={<KeyboardArrowDownIcon />}
-            sx={{
-              fontWeight: isOptionsActive ? 'bold' : 'normal',
-              borderBottom: isOptionsActive ? '2px solid white' : '2px solid transparent',
-              borderRadius: 0,
-            }}
-          >
-            Options
-          </Button>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-            transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-          >
-            {optionsSubMenu.map((item) => (
-              <MenuItem key={item.to} onClick={() => handleSubMenuClick(item.to)}>
+            if ('paths' in item) {
+              return (
+                <span key={item.label}>
+                  <Button
+                    color="inherit"
+                    onClick={(e) => handleOpen(item.label, e)}
+                    endIcon={<KeyboardArrowDownIcon />}
+                    sx={buttonSx}
+                  >
+                    {item.label}
+                  </Button>
+                  <Menu
+                    anchorEl={openMenu?.label === item.label ? openMenu.anchor : null}
+                    open={openMenu?.label === item.label}
+                    onClose={handleClose}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                    transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+                    slotProps={{
+                      paper: {
+                        sx: {
+                          bgcolor: 'primary.main',
+                          color: 'white',
+                          mt: 0.5,
+                          minWidth: 200,
+                        },
+                      },
+                    }}
+                  >
+                    {item.paths.map((sub) => (
+                      <MenuItem
+                        key={sub.path}
+                        onClick={() => handleSubNav(sub.path)}
+                        sx={{
+                          fontSize: '0.875rem',
+                          fontWeight: 500,
+                          letterSpacing: '0.02857em',
+                          fontFamily: 'inherit',
+                          textTransform: 'uppercase',
+                          '&:hover': { bgcolor: 'primary.dark' },
+                        }}
+                      >
+                        {sub.label}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </span>
+              );
+            }
+
+            return (
+              <Button
+                key={item.path}
+                color="inherit"
+                onClick={() => navigate(item.path)}
+                sx={buttonSx}
+              >
                 {item.label}
-              </MenuItem>
-            ))}
-          </Menu>
-
-          {navItems.slice(1).map((item) => (
-            <Button
-              key={item.path}
-              color="inherit"
-              onClick={() => navigate(item.path)}
-              sx={{
-                fontWeight: location.pathname === item.path ? 'bold' : 'normal',
-                borderBottom: location.pathname === item.path ? '2px solid white' : '2px solid transparent',
-                borderRadius: 0,
-              }}
-            >
-              {item.label}
-            </Button>
-          ))}
+              </Button>
+            );
+          })}
         </Box>
       </Toolbar>
     </AppBar>

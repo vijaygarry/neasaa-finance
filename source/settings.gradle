@@ -8,5 +8,5 @@ def localProps = new Properties()
 file('local.properties').withInputStream { localProps.load(it) }
 
 rootProject.name = 'neasaa-finance-app'
-include ':components:finance-app', ':components:finance-ux', ':components:neasaa-base-app'
+include ':components:finance-app', ':components:finance-ux', ':components:neasaa-base-app', ':components:finance-integ-test'
 project(':components:neasaa-base-app').projectDir = file(localProps['neasaaBaseAppPath'])

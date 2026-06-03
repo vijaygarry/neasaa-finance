@@ -10,3 +10,4 @@ source/components/finance-ux/coverage
 source/components/finance-ux/build
 source/components/finance-app/src/main/resources/static/
 source/distribution/
+source/components/finance-integ-test/build
