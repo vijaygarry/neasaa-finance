@@ -1,0 +1,24 @@
+plugins {
+    // Apply the spotless plugin before common.gradle.
+    id 'com.diffplug.spotless' version '8.5.1' apply false
+}
+
+apply from: "${rootDir}/gradle/common.gradle"
+
+sourceSets {
+    test {
+        resources {
+            srcDir 'src/test/config'
+        }
+    }
+}
+
+jar {
+    archiveBaseName.set('finance-integ-test')
+}
+
+dependencies {
+    testImplementation libraries.integTest
+    testImplementation libraries.neasaaUtils
+    testRuntimeOnly libraries.log4j
+}
