@@ -26,6 +26,8 @@ import {
   Divider,
   Alert,
 } from '@mui/material';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -33,39 +35,9 @@ import { useSearchParams } from 'react-router-dom';
 import { searchStocks, Stock } from '../services/financeApi';
 import { SAMPLE_OPTIONS_CHAIN, ExpirationData } from '../utils/sampleOptionsChain';
 import { SAMPLE_STOCKS, StockDetail } from '../utils/sampleStocks';
-
-const PERIODS = ['3M', '6M', '9M', '12M'] as const;
-type Period = typeof PERIODS[number];
-
-const PERIOD_DAYS: Record<Period, number> = {
-  '3M': 92,
-  '6M': 183,
-  '9M': 274,
-  '12M': 366,
-};
-
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function formatDateOnly(dateStr: string): string {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mmm = MONTHS[d.getMonth()];
-  const yyyy = d.getFullYear();
-  return `${dd}-${mmm}-${yyyy}`;
-}
-
-function formatCount(n: number): string {
-  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
-  return n.toString();
-}
-
-interface EventMarker {
-  type: 'dividend' | 'earnings';
-  label: string;
-  date: string; // ISO YYYY-MM-DD
-}
+import { formatDateTime, formatExpiryLabel, PERIODS, PERIOD_DAYS, Period } from '../utils/dateUtils';
+import { formatCount } from '../utils/numberUtils';
+import EventBanner, { EventMarker } from '../components/EventBanner';
 
 function getEvents(detail: StockDetail): EventMarker[] {
   const today = new Date().toISOString().slice(0, 10);
@@ -77,42 +49,6 @@ function getEvents(detail: StockDetail): EventMarker[] {
     events.push({ type: 'earnings', label: 'Earnings', date: detail.nextEarningsDate });
   }
   return events.sort((a, b) => a.date.localeCompare(b.date));
-}
-
-function EventBanner({ event }: { event: EventMarker }) {
-  const isDividend = event.type === 'dividend';
-  const borderColor = isDividend ? '#2e7d32' : '#e65100';
-  const bgColor = isDividend ? 'rgba(46, 125, 50, 0.07)' : 'rgba(230, 81, 0, 0.07)';
-  const chipColor = isDividend ? 'success' : 'warning';
-
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
-        px: 2,
-        py: 0.75,
-        mb: 1,
-        borderLeft: `3px solid ${borderColor}`,
-        bgcolor: bgColor,
-        borderRadius: '0 4px 4px 0',
-      }}
-    >
-      <Chip
-        label={isDividend ? 'Dividend' : 'Earnings'}
-        size="small"
-        color={chipColor as 'success' | 'warning'}
-        sx={{ fontWeight: 'bold', fontSize: '0.7rem', height: 22 }}
-      />
-      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-        {event.label}
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        {formatDateOnly(event.date)}
-      </Typography>
-    </Box>
-  );
 }
 
 interface OptionsPageProps {
@@ -161,6 +97,8 @@ export default function OptionsPage({ initialOptionType, pageTitle = 'Options Ch
 
   const stockInfo = SAMPLE_STOCKS.find(s => s.symbol === currentSymbol);
   const events = stockInfo ? getEvents(stockInfo) : [];
+  const isPositive = stockInfo ? stockInfo !== null && stockInfo.changeValue >= 0: false;
+  const changeColor = isPositive ? 'success.main' : 'error.main';
 
   const handleInputChange = useCallback(async (
     _: React.SyntheticEvent,
@@ -433,32 +371,50 @@ export default function OptionsPage({ initialOptionType, pageTitle = 'Options Ch
         <>
           {/* Stock price banner */}
           {stockInfo && (
-            <Paper
-              elevation={1}
-              sx={{ p: 2, mb: 2, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 2 }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{stockInfo.symbol}</Typography>
-              <Typography variant="body1" color="text.secondary">{stockInfo.name}</Typography>
-              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                ${stockInfo.currentPrice.toFixed(2)}
+            <Paper elevation={1} sx={{ p: 3, mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 1, mb: 1 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                  {stockInfo.symbol} - {stockInfo.name}
+                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <Chip
+                    label={`Type: ${optionType === 'call' ? 'Call' : 'Put'}`}
+                    color={optionType === 'call' ? 'success' : 'error'}
+                    size="small"
+                  />
+                  <Chip label={`Period: ${period}`} variant="outlined" size="small" />
+                  <Chip label={`Options: ${weeklyOptions ? 'Weekly' : 'Monthly'}`} variant="outlined" size="small" />
+                  {(priceFrom || priceTo) && (
+                    <Chip
+                      label={`Price: $${priceFrom || '0'} – $${priceTo || '∞'}`}
+                      variant="outlined"
+                      size="small"
+                    />
+                  )}
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                  ${stockInfo.currentPrice.toFixed(2)}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  {isPositive
+                    ? <ArrowDropUpIcon sx={{ color: changeColor, fontSize: 32 }} />
+                    : <ArrowDropDownIcon sx={{ color: changeColor, fontSize: 32 }} />
+                  }
+                  <Typography variant="h6" sx={{ fontWeight: 500, color: changeColor }}>
+                    {isPositive ? '+' : ''}{stockInfo.changeValue.toFixed(2)}
+                  </Typography>
+                  <Typography variant="h6" sx={{ ml: 1, fontWeight: 500, color: changeColor }}>
+                    ({isPositive ? '+' : ''}{stockInfo.changePercent.toFixed(2)}%)
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
+                Last updated {formatDateTime(stockInfo.lastUpdated)}
               </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: stockInfo.changeValue >= 0 ? 'success.main' : 'error.main',
-                }}
-              >
-                {stockInfo.changeValue >= 0 ? '+' : ''}
-                {stockInfo.changeValue.toFixed(2)}&nbsp;
-                ({stockInfo.changePercent.toFixed(2)}%)
-              </Typography>
-              <Chip
-                label={optionType === 'call' ? 'Calls' : 'Puts'}
-                color={optionType === 'call' ? 'success' : 'error'}
-                size="small"
-              />
-              <Chip label={period} variant="outlined" size="small" />
-              {weeklyOptions && <Chip label="Incl. Weekly" variant="outlined" size="small" />}
             </Paper>
           )}
 
@@ -485,9 +441,7 @@ export default function OptionsPage({ initialOptionType, pageTitle = 'Options Ch
                   e.date <= exp.date && (prevDate === '' || e.date > prevDate)
                 );
                 const contracts = optionType === 'call' ? exp.calls : exp.puts;
-                const itmColor = optionType === 'call'
-                  ? 'rgba(76, 175, 80, 0.10)'
-                  : 'rgba(244, 67, 54, 0.10)';
+                const itmColor = 'rgba(0, 0, 0, 0.06)';
 
                 return (
                   <Fragment key={exp.date}>
@@ -514,7 +468,7 @@ export default function OptionsPage({ initialOptionType, pageTitle = 'Options Ch
                           {isCollapsed ? <ExpandMoreIcon fontSize="small" /> : <ExpandLessIcon fontSize="small" />}
                         </IconButton>
                         <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                          {exp.label}&nbsp;({exp.isWeekly ? 'W' : 'M'})
+                          {formatExpiryLabel(exp.date)}&nbsp;({exp.isWeekly ? 'W' : 'M'})
                         </Typography>
                         <Typography variant="caption" color="text.secondary" sx={{ ml: 1 }}>
                           (expires in {exp.daysToExpiry} days)

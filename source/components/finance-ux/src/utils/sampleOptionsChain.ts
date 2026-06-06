@@ -133,32 +133,32 @@ interface ExpirationSpec {
   dte: number;
 }
 
-// All available expiration dates (weekly + monthly) through 12 months from 2026-05-31
+// All available expiration dates (weekly + monthly) through 12 months from 2026-06-04
 const ALL_EXPIRATIONS: ExpirationSpec[] = [
   // Weekly expirations (non-monthly Fridays)
-  { date: '2026-06-05', label: 'Jun 5, 2026',  isWeekly: true,  dte: 5   },
-  { date: '2026-06-12', label: 'Jun 12, 2026', isWeekly: true,  dte: 12  },
-  { date: '2026-06-26', label: 'Jun 26, 2026', isWeekly: true,  dte: 26  },
-  { date: '2026-07-03', label: 'Jul 3, 2026',  isWeekly: true,  dte: 33  },
-  { date: '2026-07-10', label: 'Jul 10, 2026', isWeekly: true,  dte: 40  },
-  { date: '2026-07-24', label: 'Jul 24, 2026', isWeekly: true,  dte: 54  },
-  { date: '2026-07-31', label: 'Jul 31, 2026', isWeekly: true,  dte: 61  },
-  { date: '2026-08-07', label: 'Aug 7, 2026',  isWeekly: true,  dte: 68  },
-  { date: '2026-08-14', label: 'Aug 14, 2026', isWeekly: true,  dte: 75  },
-  { date: '2026-08-28', label: 'Aug 28, 2026', isWeekly: true,  dte: 89  },
+  { date: '2026-06-05', label: 'Jun 5, 2026',  isWeekly: true,  dte: 1   },
+  { date: '2026-06-12', label: 'Jun 12, 2026', isWeekly: true,  dte: 8   },
+  { date: '2026-06-26', label: 'Jun 26, 2026', isWeekly: true,  dte: 22  },
+  { date: '2026-07-03', label: 'Jul 3, 2026',  isWeekly: true,  dte: 29  },
+  { date: '2026-07-10', label: 'Jul 10, 2026', isWeekly: true,  dte: 36  },
+  { date: '2026-07-24', label: 'Jul 24, 2026', isWeekly: true,  dte: 50  },
+  { date: '2026-07-31', label: 'Jul 31, 2026', isWeekly: true,  dte: 57  },
+  { date: '2026-08-07', label: 'Aug 7, 2026',  isWeekly: true,  dte: 64  },
+  { date: '2026-08-14', label: 'Aug 14, 2026', isWeekly: true,  dte: 71  },
+  { date: '2026-08-28', label: 'Aug 28, 2026', isWeekly: true,  dte: 85  },
   // Monthly expirations (3rd Friday of each month)
-  { date: '2026-06-19', label: 'Jun 19, 2026', isWeekly: false, dte: 19  },
-  { date: '2026-07-17', label: 'Jul 17, 2026', isWeekly: false, dte: 47  },
-  { date: '2026-08-21', label: 'Aug 21, 2026', isWeekly: false, dte: 82  },
-  { date: '2026-09-18', label: 'Sep 18, 2026', isWeekly: false, dte: 110 },
-  { date: '2026-10-16', label: 'Oct 16, 2026', isWeekly: false, dte: 138 },
-  { date: '2026-11-20', label: 'Nov 20, 2026', isWeekly: false, dte: 173 },
-  { date: '2026-12-18', label: 'Dec 18, 2026', isWeekly: false, dte: 201 },
-  { date: '2027-01-15', label: 'Jan 15, 2027', isWeekly: false, dte: 229 },
-  { date: '2027-02-19', label: 'Feb 19, 2027', isWeekly: false, dte: 264 },
-  { date: '2027-03-19', label: 'Mar 19, 2027', isWeekly: false, dte: 292 },
-  { date: '2027-04-16', label: 'Apr 16, 2027', isWeekly: false, dte: 320 },
-  { date: '2027-05-21', label: 'May 21, 2027', isWeekly: false, dte: 355 },
+  { date: '2026-06-19', label: 'Jun 19, 2026', isWeekly: false, dte: 15  },
+  { date: '2026-07-17', label: 'Jul 17, 2026', isWeekly: false, dte: 43  },
+  { date: '2026-08-21', label: 'Aug 21, 2026', isWeekly: false, dte: 78  },
+  { date: '2026-09-18', label: 'Sep 18, 2026', isWeekly: false, dte: 106 },
+  { date: '2026-10-16', label: 'Oct 16, 2026', isWeekly: false, dte: 134 },
+  { date: '2026-11-20', label: 'Nov 20, 2026', isWeekly: false, dte: 169 },
+  { date: '2026-12-18', label: 'Dec 18, 2026', isWeekly: false, dte: 197 },
+  { date: '2027-01-15', label: 'Jan 15, 2027', isWeekly: false, dte: 225 },
+  { date: '2027-02-19', label: 'Feb 19, 2027', isWeekly: false, dte: 260 },
+  { date: '2027-03-19', label: 'Mar 19, 2027', isWeekly: false, dte: 288 },
+  { date: '2027-04-16', label: 'Apr 16, 2027', isWeekly: false, dte: 316 },
+  { date: '2027-05-21', label: 'May 21, 2027', isWeekly: false, dte: 351 },
 ].sort((a, b) => a.dte - b.dte);
 
 interface StockConfig {
@@ -170,11 +170,11 @@ interface StockConfig {
 }
 
 const STOCK_CONFIGS: StockConfig[] = [
-  { symbol: 'AAPL',  price: 189.45, baseIV: 28, strikeStep: 5,  strikeCount: 15 },
-  { symbol: 'TSLA',  price: 178.20, baseIV: 55, strikeStep: 5,  strikeCount: 15 },
-  { symbol: 'MSFT',  price: 415.30, baseIV: 25, strikeStep: 10, strikeCount: 15 },
-  { symbol: 'GOOGL', price: 175.80, baseIV: 27, strikeStep: 5,  strikeCount: 15 },
-  { symbol: 'AMZN',  price: 186.50, baseIV: 32, strikeStep: 5,  strikeCount: 15 },
+  { symbol: 'AAPL',  price: 311.52, baseIV: 24.5, strikeStep: 5,  strikeCount: 15 },
+  { symbol: 'TSLA',  price: 422.73, baseIV: 42.3, strikeStep: 10, strikeCount: 15 },
+  { symbol: 'MSFT',  price: 428.05, baseIV: 27.7, strikeStep: 10, strikeCount: 15 },
+  { symbol: 'GOOGL', price: 370.53, baseIV: 30.1, strikeStep: 5,  strikeCount: 15 },
+  { symbol: 'AMZN',  price: 253.61, baseIV: 30.6, strikeStep: 5,  strikeCount: 15 },
 ];
 
 function makeStrikes(price: number, step: number, count: number): number[] {

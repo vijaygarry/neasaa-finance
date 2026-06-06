@@ -10,36 +10,8 @@ import InfoTooltip from '../components/InfoTooltip';
 import { useNavigate } from 'react-router-dom';
 import { searchStocks, Stock } from '../services/financeApi';
 import { StockDetail, SAMPLE_STOCKS } from '../utils/sampleStocks';
-
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mmm = MONTHS[d.getMonth()];
-  const yyyy = d.getFullYear();
-  const hh = String(d.getHours()).padStart(2, '0');
-  const min = String(d.getMinutes()).padStart(2, '0');
-  const ss = String(d.getSeconds()).padStart(2, '0');
-  return `${dd}-${mmm}-${yyyy} ${hh}:${min}:${ss}`;
-}
-
-function formatNumber(value: number): string {
-  if (value >= 1000000000000) return `$${(value / 1000000000000).toFixed(2)}T`;
-  if (value >= 1000000000) return `$${(value / 1000000000).toFixed(2)}B`;
-  if (value >= 1000000) return `${(value / 1000000).toFixed(2)}M`;
-  if (value >= 1000) return `${(value / 1000).toFixed(0)}K`;
-  return value.toFixed(2);
-}
-
-function formatDateOnly(dateStr: string): string {
-  if (!dateStr) return '—';
-  const d = new Date(dateStr);
-  const dd = String(d.getDate()).padStart(2, '0');
-  const mmm = MONTHS[d.getMonth()];
-  const yyyy = d.getFullYear();
-  return `${dd}-${mmm}-${yyyy}`;
-}
+import { formatDateOnly, formatDateTime } from '../utils/dateUtils';
+import { formatNumber } from '../utils/numberUtils';
 
 interface DataRowProps {
   label: string;
@@ -259,7 +231,7 @@ export default function StockDetailsPage() {
             </Box>
 
             <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1.5 }}>
-              Last updated {formatDate(detail.lastUpdated)}
+              Last updated {formatDateTime(detail.lastUpdated)}
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 1 }}>
