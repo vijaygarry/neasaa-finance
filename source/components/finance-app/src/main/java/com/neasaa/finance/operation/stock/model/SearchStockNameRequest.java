@@ -6,10 +6,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class StockSuggestionRequest extends OperationRequest {
+public class SearchStockNameRequest extends OperationRequest {
     private String query;
 
-    public StockSuggestionRequest() {
+    public SearchStockNameRequest() {
     }
 
     @Override

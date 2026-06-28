@@ -5,35 +5,33 @@ import com.neasaa.base.app.operation.exception.OperationException;
 import com.neasaa.finance.dao.entity.Asset;
 import com.neasaa.finance.dao.pg.AssetDao;
 import com.neasaa.finance.operation.FinanceOperationNames;
-import com.neasaa.finance.operation.stock.model.StockSuggestionRequest;
-import com.neasaa.finance.operation.stock.model.StockSuggestionResponse;
-import com.neasaa.finance.operation.stock.model.StockSuggestionResponse.StockSuggestion;
+import com.neasaa.finance.operation.stock.model.SearchStockNameRequest;
+import com.neasaa.finance.operation.stock.model.SearchStockNameResponse;
+import com.neasaa.finance.operation.stock.model.SearchStockNameResponse.StockSuggestion;
 import java.util.List;
-import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Log4j2
-@Component("StockSuggestionOperation")
+@Component("SearchStockNameOperation")
 @Scope("prototype")
-public class StockSuggestionOperation extends AbstractOperation<StockSuggestionRequest, StockSuggestionResponse> {
+public class SearchStockNameOperation extends AbstractOperation<SearchStockNameRequest, SearchStockNameResponse> {
 
     @Autowired
     private AssetDao assetDao;
 
     @Override
     public String getOperationName() {
-        return FinanceOperationNames.STOCK_SUGGESTION;
+        return FinanceOperationNames.SEARCH_STOCK_NAME;
     }
 
     @Override
-    public void doValidate(StockSuggestionRequest opRequest) throws OperationException {
+    public void doValidate(SearchStockNameRequest opRequest) throws OperationException {
     }
 
     @Override
-    public StockSuggestionResponse doExecute(StockSuggestionRequest request) throws OperationException {
-        StockSuggestionResponse response = new StockSuggestionResponse();
+    public SearchStockNameResponse doExecute(SearchStockNameRequest request) throws OperationException {
+        SearchStockNameResponse response = new SearchStockNameResponse();
 
         if (request.getQuery() == null || request.getQuery().isBlank()) {
             response.setStockList(List.of());

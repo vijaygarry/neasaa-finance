@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class StockSuggestionResponse extends OperationResponse {
+public class SearchStockNameResponse extends OperationResponse {
 
     @Getter
     @Setter
@@ -24,6 +24,6 @@ public class StockSuggestionResponse extends OperationResponse {
 
     private List<StockSuggestion> stockList;
 
-    public StockSuggestionResponse() {
+    public SearchStockNameResponse() {
     }
 }
