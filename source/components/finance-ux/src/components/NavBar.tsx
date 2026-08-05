@@ -30,7 +30,7 @@ export default function NavBar() {
       <Toolbar>
         <Box
           component="img"
-          src="/logo_icon.jpg"
+          src="/logo_icon.png"
           alt="Neasaa Finance"
           onClick={() => navigate('/')}
           sx={{ height: 40, width: 40, borderRadius: 1, mr: 1, cursor: 'pointer' }}
@@ -48,7 +48,6 @@ export default function NavBar() {
             const buttonSx = {
               fontWeight: active ? 'bold' : 'normal',
               borderBottom: active ? '2px solid white' : '2px solid transparent',
-              borderRadius: 0,
             };
 
             if ('paths' in item) {
@@ -71,10 +70,15 @@ export default function NavBar() {
                     slotProps={{
                       paper: {
                         sx: {
-                          bgcolor: 'primary.main',
-                          color: 'white',
+                          bgcolor: 'rgba(255, 255, 255, 0.45)',
+                          backdropFilter: 'blur(20px) saturate(1.6)',
+                          WebkitBackdropFilter: 'blur(20px) saturate(1.6)',
+                          border: '1px solid rgba(255, 255, 255, 0.55)',
+                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6)',
+                          color: 'text.primary',
                           mt: 0.5,
                           minWidth: 200,
+                          borderRadius: 3,
                         },
                       },
                     }}
@@ -89,7 +93,9 @@ export default function NavBar() {
                           letterSpacing: '0.02857em',
                           fontFamily: 'inherit',
                           textTransform: 'uppercase',
-                          '&:hover': { bgcolor: 'primary.dark' },
+                          borderRadius: 2,
+                          mx: 0.5,
+                          '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.4)' },
                         }}
                       >
                         {sub.label}
@@ -112,6 +118,19 @@ export default function NavBar() {
             );
           })}
         </Box>
+
+        <Typography
+          variant="caption"
+          sx={{
+            ml: 'auto',
+            opacity: 0.7,
+            fontWeight: 500,
+            letterSpacing: 0.5,
+            fontSize: '0.7rem',
+          }}
+        >
+          beta 1.24.1
+        </Typography>
       </Toolbar>
     </AppBar>
   );
