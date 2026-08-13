@@ -4,7 +4,7 @@
 
 CREATE TABLE IF NOT EXISTS finance_schema.account
 (
-    accountid bigint NOT NULL DEFAULT nextval('account_accountid_seq'::regclass),
+    accountid bigserial NOT NULL,
     userid integer NOT NULL,
     accountnumber character varying(100) COLLATE pg_catalog."default",
     accountname character varying(100) COLLATE pg_catalog."default" NOT NULL,
