@@ -5,6 +5,7 @@ import com.neasaa.base.app.operation.AuditInfo;
 import com.neasaa.base.app.operation.exception.OperationException;
 import com.neasaa.base.app.operation.exception.ValidationException;
 import com.neasaa.finance.dao.entity.account.AccountSnapshot;
+import com.neasaa.finance.dao.pg.account.AccountSnapshotDao;
 import com.neasaa.finance.enums.BankEnum;
 import com.neasaa.finance.operation.FinanceOperationNames;
 import com.neasaa.finance.operation.account.model.UploadAccountSnapshotRequest;
@@ -12,9 +13,10 @@ import com.neasaa.finance.operation.account.model.UploadAccountSnapshotResponse;
 import com.neasaa.finance.service.account.parser.snapshot.AccountSnapshotParser;
 import com.neasaa.finance.service.account.parser.snapshot.AccountSnapshotParserFactory;
 import java.io.IOException;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,9 @@ public class UploadAccountSnapshotOperation
         extends AbstractOperation<UploadAccountSnapshotRequest, UploadAccountSnapshotResponse> {
 
     private static final AccountSnapshotParserFactory parserFactory = new AccountSnapshotParserFactory();
+
+    @Autowired
+    private AccountSnapshotDao accountSnapshotDao;
 
     @Override
     public String getOperationName() {
@@ -67,6 +72,7 @@ public class UploadAccountSnapshotOperation
             // We can then validate the bank account number against the account's bank account number.
             // This also require the change in response of the parser to return the bank account number and snapshot date.
             snapshots = parser.parseSnapshot(request.getSnapshotCSVFilePath(), request.getAccountId(), auditInfo);
+            accountSnapshotDao.insertAccountSnapshots(snapshots);
         } catch (IOException e) {
             throw new ValidationException("Failed to parse snapshot file: " + e.getMessage());
         }

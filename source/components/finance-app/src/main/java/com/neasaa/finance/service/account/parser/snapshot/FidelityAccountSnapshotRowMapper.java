@@ -111,7 +111,11 @@ public class FidelityAccountSnapshotRowMapper extends CSVRowMapper<AccountSnapsh
         .lastUpdatedDate(auditInfo.getLastUpdatedDate())
         .build();
     }
-
+    BigDecimal quantity = parseBigDecimal(getCSVColumnValue(csvRecord, COL_QUANTITY));
+    BigDecimal totalCostBasis = parseFidelityDecimalValue(csvRecord, COL_COST_BASIS_TOTAL);
+    if (quantity != null && quantity.signum() < 0 && totalCostBasis != null && totalCostBasis.signum() > 0) {
+      totalCostBasis = totalCostBasis.negate();
+    }
     return AccountSnapshot.builder()
         .accountId(accountId)
         .accountNumber(getCSVColumnValue(csvRecord, COL_ACCOUNT_NUMBER))
@@ -119,14 +123,14 @@ public class FidelityAccountSnapshotRowMapper extends CSVRowMapper<AccountSnapsh
         .symbol(symbol)
         .optionSymbol(parsedOptionSymbol)
         .description(description)
-        .quantity(parseBigDecimal(getCSVColumnValue(csvRecord, COL_QUANTITY)))
+        .quantity(quantity)
         .lastPrice(parseFidelityDecimalValue(csvRecord, COL_LAST_PRICE))
         .lastPriceChange(parseFidelityDecimalValue(csvRecord, COL_LAST_PRICE_CHANGE))
         .currentValue(parseFidelityDecimalValue(csvRecord, COL_CURRENT_VALUE))
         .todayGainLoss(parseFidelityDecimalValue(csvRecord, COL_TODAY_GAIN_LOSS))
         .totalGainLoss(parseFidelityDecimalValue(csvRecord, COL_TOTAL_GAIN_LOSS))
         .percentOfAccount(parseFidelityDecimalValue(csvRecord, COL_PERCENT_OF_ACCOUNT))
-        .totalCostBasis(parseFidelityDecimalValue(csvRecord, COL_COST_BASIS_TOTAL))
+        .totalCostBasis(totalCostBasis)
         .averageCostBasis(parseFidelityDecimalValue(csvRecord, COL_AVERAGE_COST_BASIS))
         .createdBy(auditInfo.getCreatedBy())
         .createdDate(auditInfo.getCreatedDate())

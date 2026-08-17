@@ -21,7 +21,8 @@ public class AccountSnapshot extends BaseEntity {
 
   @Serial private static final long serialVersionUID = 1745893230092L;
   
-  private long accountId;
+  private long accountId; //Neasaa account id
+  private String accountNumber; // Bank account number
   private LocalDate snapshotDate;
   private String symbol;
   // For options, this is the full option symbol (e.g., AAPL261218C360). For stocks, this will be null.
