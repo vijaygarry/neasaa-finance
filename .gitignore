@@ -28,3 +28,4 @@ source/.gradle/buildOutputCleanup/buildOutputCleanup.lock
 source/.gradle/buildOutputCleanup/cache.properties
 source/.gradle/buildOutputCleanup/outputFiles.bin
 source/.gradle/vcs-1/gc.properties
+source/components/finance-integ-test/bin/

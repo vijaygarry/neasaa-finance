@@ -93,7 +93,10 @@ ext.libraries = [
 	// To encrypt/decrypt password.
 	bouncycastleProvider: "org.bouncycastle:bcprov-jdk15to18:1.80@jar",
 
-    //commonsIo: "commons-io:commons-io:2.8.0@jar",
+	// CSV parser library needs csvParser, commonsIo and commonsCodec libraries.
+	csvParser: "org.apache.commons:commons-csv:1.14.1@jar",
+    commonsIo: "commons-io:commons-io:2.20.0@jar",
+	commonsCodec: "commons-codec:commons-codec:1.22.1@jar",
 
 	userAgentParser: "nl.basjes.parse.useragent:yauaa:6.4@jar",
 	prefixmap: "nl.basjes.collections:prefixmap:2.0@jar", // Required for user agent parser
