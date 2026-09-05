@@ -23,8 +23,8 @@ Before building, set the required credentials in the following files:
 Create a `local.properties` file in the project root and set the local paths:
 
 ```properties
-neasaaBaseAppPath=/path/to/neasaa-base-app
-uxComponentRootPath=/path/to/neasaa-finance/source/components/finance-ux
+neasaaBaseAppPath=</path/to/neasaa-base-app>
+uxComponentRootPath=</path/to/neasaa-finance>/source/components/finance-ux
 ```
 
 > This file is git-ignored. Set the paths to match your local directory layout.
@@ -72,7 +72,7 @@ Complete the database setup by following the instructions in [docs/db-setup.md](
 Complete the UX setup by following the instructions in [source/components/finance-ux/setup-ux.md](source/components/finance-ux/setup-ux.md).
 
 ### Step 5: Build
-
+cd <neasaa-finance>/source
 # Normal build (skips React build — fast)
 ./gradlew build
 
@@ -87,3 +87,30 @@ Complete the UX setup by following the instructions in [source/components/financ
 ```bash
 ./gradlew runFinanceApp
 ```
+
+
+
+Sample command:
+```
+curl -s -X POST "http://localhost:8080/api/stocks/search" \
+    -H "Content-Type: application/json" \
+    -d '{"query":"AAPL"}' | jq .
+```
+
+Sample Response:
+```
+{
+  "operationMessage": null,
+  "stockList": [
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc.",
+      "type": "Equity"
+    }
+  ]
+}
+```
+
+
+DB Operations:
+ls -l /Users/vijaygarothaya/work/installations/PostgreSQL/15/bin

@@ -7,13 +7,14 @@
 # information_schema.tables are discovered and dumped automatically.
 #
 # Usage:
-#   ./pg-dump.sh --mode <schema|data> [OPTIONS] [--table <table>] ...
+#   ./pg-dump.sh --mode <schema|data|full> [OPTIONS] [--table <table>] ...
 #
 # Required:
 #   -m, --mode        schema   Export DDL only (tables, indexes, sequences,
 #                              constraints, grants, etc.)
 #                     data     Export data only as INSERT statements with
 #                              explicit column names (no DDL)
+#                     full     Export both DDL and data as INSERT statements
 #
 # Connection options (all optional — fall back to pg defaults / env vars):
 #   -h, --host        DB host            (default: localhost, or PGHOST)
@@ -41,6 +42,7 @@
 #   ./pg-dump.sh --mode schema --dbname finance --username postgres
 #   ./pg-dump.sh --mode data --dbname finance --username postgres --outdir ./test
 #   ./pg-dump.sh --mode schema --dbname finance --username postgres --outdir ./test
+#   ./pg-dump.sh --mode full --dbname finance --username postgres --outdir ./test
 #   export PGPASSWORD=admin123
 #   # Dump data for two specific tables into ./dumps/
 #   ./pg-dump.sh --mode data --dbname finance --username postgres \
@@ -157,8 +159,8 @@ require_cmd psql
 [[ -z "$DB_NAME" ]] && err "--dbname is required (or set PGDATABASE). Run with --help."
 
 case "$MODE" in
-    schema|data) ;;
-    *) err "Invalid --mode '$MODE'. Must be 'schema' or 'data'." ;;
+    schema|data|full) ;;
+    *) err "Invalid --mode '$MODE'. Must be 'schema', 'data', or 'full'." ;;
 esac
 
 # ── export password (keep it out of shell history) ────────────────────────────
@@ -236,7 +238,45 @@ case "$MODE" in
             --column-inserts
         )
         ;;
+    full)
+        # No --schema-only / --data-only: pg_dump emits DDL followed by data
+        BASE_DUMP_ARGS+=(
+            --inserts
+            --column-inserts
+        )
+        ;;
 esac
+
+# ── full mode: single-file dump of the entire database ───────────────────────
+
+if [[ "$MODE" == "full" ]]; then
+    DATE_SUFFIX=$(date +%Y%m%d)
+    OUT_FILE="${OUT_DIR}/${DB_NAME}-${DATE_SUFFIX}.sql"
+
+    info "Mode       : $MODE"
+    info "Host       : $DB_HOST:$DB_PORT"
+    info "Database   : $DB_NAME"
+    [[ -n "$DB_USER"   ]] && info "User       : $DB_USER"
+    [[ -n "$PG_SCHEMA" ]] && info "PG Schema  : $PG_SCHEMA"
+    info "Output file: $OUT_FILE"
+    echo ""
+
+    FULL_DUMP_ARGS=("${BASE_DUMP_ARGS[@]}")
+    [[ -n "$PG_SCHEMA" ]] && FULL_DUMP_ARGS+=(--schema="$PG_SCHEMA")
+
+    info "Dumping → $DB_NAME  ▸  $OUT_FILE"
+    if pg_dump "${FULL_DUMP_ARGS[@]}" | strip_pg_headers > "$OUT_FILE"; then
+        FILE_SIZE=$(du -sh "$OUT_FILE" 2>/dev/null | cut -f1)
+        info "  ✔  $OUT_FILE ($FILE_SIZE)"
+        echo ""
+        info "════════════════════════════════════════════"
+        info "Complete."
+        info "Output file: $OUT_FILE"
+    else
+        err "pg_dump failed for database '$DB_NAME'."
+    fi
+    exit 0
+fi
 
 # ── print run summary ─────────────────────────────────────────────────────────
 

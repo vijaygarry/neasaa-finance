@@ -7,15 +7,19 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    const serverMessage = (error.response?.data as any)?.operationMessage
-      ?? (error.response?.data as any)?.message;
-    if (!error.response)         return Promise.reject(new Error('Unable to reach server. Check your connection.'));
-    if (error.response.status === 401) return Promise.reject(new Error('Unauthorised. Please log in.'));
-    if (error.response.status === 403) return Promise.reject(new Error('You do not have permission to perform this action.'));
-    if (error.response.status === 404) return Promise.reject(new Error('Requested resource not found.'));
-    if (error.response.status === 500) return Promise.reject(new Error('Server error. Please try again later.'));
-    if (serverMessage)           return Promise.reject(new Error(serverMessage));
-    return Promise.reject(new Error(`Request failed (${error.response.status})`));
+    if (!error.response) return Promise.reject(new Error('Unable to reach server. Check your connection.'));
+
+    const operationMessage = (error.response.data as any)?.operationMessage;
+    if (operationMessage) return Promise.reject(new Error(operationMessage));
+
+    const genericMessage =
+      error.response.status === 401 ? 'Unauthorised. Please log in.' :
+      error.response.status === 403 ? 'You do not have permission to perform this action.' :
+      error.response.status === 404 ? 'Requested resource not found.' :
+      error.response.status === 500 ? 'Server error. Please try again later.' :
+      `Request failed (${error.response.status})`;
+
+    return Promise.reject(new Error(genericMessage));
   }
 );
 
