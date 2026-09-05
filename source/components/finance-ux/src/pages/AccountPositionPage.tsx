@@ -15,6 +15,7 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { useState } from 'react';
 import UploadCsvDialog from '../components/UploadCsvDialog';
+import { useAccount } from '../context/AccountContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -53,12 +54,7 @@ function fmtCurrency(n: number) {
   return `$${fmt(Math.abs(n))}`;
 }
 
-// ─── Sample data (replace with API call once backend ready) ───────────────────
-
-const SAMPLE_ACCOUNT = {
-  accountNumber: 'XXX-XX1234',
-  balance: 48_231.55,
-};
+// ─── Sample positions (replace with API call once positions backend is ready) ─
 
 const SAMPLE_POSITIONS: Position[] = [
   { symbol: 'AAPL', name: 'Apple Inc.', quantity: 50, avgCostBasis: 172.40, lastPrice: 211.18, pricePaid: 8_620.00 },
@@ -97,13 +93,14 @@ function GainLossCell({ value, pct }: { value: number; pct: number }) {
 
 export default function AccountPositionPage() {
   const [uploadOpen, setUploadOpen] = useState(false);
-  const positions = SAMPLE_POSITIONS;
+  const { selectedAccount } = useAccount();
 
+  const positions = SAMPLE_POSITIONS;
   const stockMarketValue = positions.reduce((sum, p) => sum + marketValue(p), 0);
   const stockCost = positions.reduce((sum, p) => sum + p.pricePaid, 0);
 
-  // Cash is whatever remains to reach the total account balance
-  const cashValue = SAMPLE_ACCOUNT.balance - stockMarketValue;
+  const balance = selectedAccount?.currentBalance ?? null;
+  const cashValue = balance != null ? balance - stockMarketValue : 0;
   const cashPosition: Position = {
     symbol: 'CASH',
     name: 'Cash and Sweep Vehicle',
@@ -113,34 +110,29 @@ export default function AccountPositionPage() {
     pricePaid: cashValue,
   };
 
-  const allPositions = [...positions, cashPosition];
+  const allPositions = balance != null ? [...positions, cashPosition] : positions;
 
-  const totalMarketValue = SAMPLE_ACCOUNT.balance; // stockMarketValue + cashValue
-  const totalCost = stockCost + cashValue;
+  const totalMarketValue = balance ?? stockMarketValue;
+  const totalCost = stockCost + (balance != null ? cashValue : 0);
   const totalGainLoss = totalMarketValue - totalCost;
   const totalGainLossPct = totalCost > 0 ? (totalGainLoss / totalCost) * 100 : 0;
 
   return (
     <Box sx={{ px: 4, pt: 1, pb: 4, maxWidth: 1200, mx: 'auto' }}>
 
-      {/* ── Page Title ── */}
-      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
-        Account Position
-      </Typography>
-
       {/* ── Account Info Cards ── */}
       <Box sx={{ display: 'flex', gap: 3, flexWrap: 'wrap', mb: 4 }}>
         <Paper variant="outlined" sx={{ px: 3, py: 2, borderRadius: 2, minWidth: 200 }}>
           <Typography variant="body2" color="text.secondary">Account Number</Typography>
           <Typography variant="h6" sx={{ fontWeight: 'bold', letterSpacing: 1 }}>
-            {SAMPLE_ACCOUNT.accountNumber}
+            {selectedAccount?.accountNumber ?? '—'}
           </Typography>
         </Paper>
 
         <Paper variant="outlined" sx={{ px: 3, py: 2, borderRadius: 2, minWidth: 200 }}>
           <Typography variant="body2" color="text.secondary">Account Balance</Typography>
           <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            ${fmt(SAMPLE_ACCOUNT.balance)}
+            {balance != null ? `$${fmt(balance)}` : '—'}
           </Typography>
         </Paper>
 
@@ -173,7 +165,6 @@ export default function AccountPositionPage() {
           </Box>
         </Paper>
       </Box>
-
 
       <Divider sx={{ mb: 3 }} />
 

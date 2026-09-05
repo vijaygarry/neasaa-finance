@@ -7,18 +7,20 @@ import {
   Tab,
   TextField,
   MenuItem,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import AccountPositionPage from './AccountPositionPage';
 import AccountTransactionsPage from './AccountTransactionsPage';
 import { useAccount } from '../context/AccountContext';
 
-
 // ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function AccountsImportPage() {
-  const { selectedAccount, accounts, selectedAccountId, setSelectedAccountId, accountsLoading } = useAccount();
+  const { selectedAccount, accounts, selectedAccountId, setSelectedAccountId, accountsLoading, accountsError } = useAccount();
   const [activeTab, setActiveTab] = useState(0);
+
   return (
     <Box sx={{ px: 4, pt: 1, pb: 4 }}>
       {/* ── Title row with inline account selector ── */}
@@ -26,68 +28,53 @@ export default function AccountsImportPage() {
         <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
           Accounts
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-          <AccountBalanceIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-          <TextField
-            select
-            size="small"
-            value={selectedAccountId}
-            onChange={e => setSelectedAccountId(Number(e.target.value))}
-            disabled={accountsLoading}
-            variant="outlined"
-            sx={{ minWidth: 200 }}
-          >
-            {accounts.length === 0
-              ? <MenuItem value="" disabled><Typography variant="body2" color="text.secondary">No accounts loaded</Typography></MenuItem>
-              : accounts.map(a => (
-                <MenuItem key={a.accountId} value={a.accountId}>
-                  <Box>
-                    <Typography variant="body2" sx={{ fontWeight: 600, lineHeight: 1.2 }}>
-                      {a.accountName}
+        {accountsLoading && <CircularProgress size={20} />}
+        {!accountsLoading && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+            <AccountBalanceIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
+            <TextField
+              select
+              size="small"
+              value={selectedAccountId}
+              onChange={e => setSelectedAccountId(Number(e.target.value))}
+              variant="outlined"
+              sx={{ minWidth: 200 }}
+            >
+              {accounts.length === 0
+                ? <MenuItem value="" disabled><Typography variant="body2" color="text.secondary">No accounts</Typography></MenuItem>
+                : accounts.map(a => (
+                  <MenuItem key={a.accountId} value={a.accountId}>
+                    <Typography variant="body2">
+                      {a.accountName} · {a.bankName}
                     </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {a.bankName} · {a.accountNumber}
-                    </Typography>
-                  </Box>
-                </MenuItem>
-              ))}
-          </TextField>
-        </Box>
+                  </MenuItem>
+                ))}
+            </TextField>
+          </Box>
+        )}
       </Box>
 
+      {accountsError && (
+        <Alert severity="error" sx={{ mb: 2 }}>{accountsError}</Alert>
+      )}
 
-
-      {/* Selected account info chips */}
-      {selectedAccount && (
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-          <Chip size="small" label={`Bank: ${selectedAccount.bankName}`} variant="outlined" />
-          <Chip size="small" label={`ID: ${selectedAccount.accountNumber}`} variant="outlined" />
-          {selectedAccount.balance != null && (
-            <Chip
-              size="small"
-              label={`Balance: $${selectedAccount.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-              color="success"
-              variant="outlined"
-            />
-          )}
-        </Box>
+      {!accountsLoading && !accountsError && accounts.length === 0 && (
+        <Alert severity="info" sx={{ mb: 2 }}>No accounts found.</Alert>
       )}
 
       {/* ── Tabs ── */}
       <Box sx={{ mb: 3 }}>
-        <Tabs value={activeTab} onChange={(e, val) => setActiveTab(val)}>
+        <Tabs value={activeTab} onChange={(_, val) => setActiveTab(val)}>
           <Tab label="Positions" sx={{ fontWeight: 'bold' }} />
           <Tab label="Transaction History" sx={{ fontWeight: 'bold' }} />
         </Tabs>
       </Box>
 
       {/* ── Tab Content ── */}
-      <Box sx={{ mx: -4, mb: 4 }}> {/* Negative margin to offset page padding if nested pages have their own padding */}
+      <Box sx={{ mx: -4, mb: 4 }}>
         {activeTab === 0 && <AccountPositionPage />}
         {activeTab === 1 && <AccountTransactionsPage />}
       </Box>
-
-
     </Box>
   );
 }

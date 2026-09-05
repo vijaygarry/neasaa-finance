@@ -25,8 +25,9 @@ export interface AccountDto {
   accountId: number;
   accountName: string;
   accountNumber: string;
-  balance: number | null;
   bankName: string;
+  accountType: string | null;
+  currentBalance: number | null;
 }
 
 export interface PositionDto {
@@ -66,8 +67,8 @@ export interface TransactionDto {
 }
 
 export const getAccountList = async (): Promise<AccountDto[]> => {
-  const { data } = await apiClient.post<ApiResponse<{ accounts: AccountDto[] }>>(
-    '/api/accounts/list', {}
+  const { data } = await apiClient.get<ApiResponse<{ accounts: AccountDto[] }>>(
+    '/api/account/list'
   );
   return data.accounts ?? [];
 };
